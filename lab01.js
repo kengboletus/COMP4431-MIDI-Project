@@ -96,6 +96,7 @@ function handleNoteOn(key_number) {
             pitch,
             amplitude
         });
+        drawNoteVisualization(); // 绘制音符
     }
     MIDI.noteOn(0, pitch, amplitude);
     let playmode = $(":radio[name=playmode]:checked").val();
@@ -119,6 +120,7 @@ function handleNoteOff(key_number) {
             pitch,
             amplitude
         });
+        drawNoteVisualization(); // 绘制音符
     }
     MIDI.noteOff(0, pitch);
     let playmode = $(":radio[name=playmode]:checked").val();
@@ -185,6 +187,7 @@ function play_recording() {
                 }
             });
         });
+        drawNoteVisualization(true); // 使用播放的 playing_BPM
     });
 }
 
@@ -193,6 +196,149 @@ function stop_recording() {
     $("#record").prop("disabled", false);
     $("#stop, #play").prop("disabled", false);
     clearTimeout(recording_timeout);
+}
+
+function drawNoteVisualization(isPlaying = false) {
+    const canvas = document.getElementById('note-visualization');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const lowest_pitch = parseInt($("#pitch").val());
+    const highest_pitch = lowest_pitch + 23;
+    const pitch_range = highest_pitch - lowest_pitch;
+    const note_height = canvas.height / pitch_range;
+
+    // Use BPM for recording visualization, and playing_BPM for playback visualization
+    const effective_BPM = isPlaying ? parseInt($("#bpm_play").val()) : BPM;
+    const total_time = (60 / effective_BPM) * 16;
+    const time_scale = canvas.width / total_time;
+
+    const colors = ['red', 'blue', 'green'];
+
+    // Draw grid lines and labels
+    ctx.font = '10px Arial';
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'center';
+
+    // Horizontal grid lines (for pitches)
+    for (let i = 0; i <= pitch_range; i++) {
+        const y = canvas.height - (i * note_height);
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+
+        // Draw pitch labels for lowest, middle, and highest pitch
+        const pitch_label = lowest_pitch + i;
+        if (i === 0) {
+            ctx.fillText(pitch_label, 10, y - 5); // Lowest pitch
+        } else if (i === Math.floor(pitch_range / 2)) {
+            ctx.fillText(pitch_label, 10, y - note_height / 2); // Middle pitch
+        } else if (i === pitch_range) {
+            ctx.fillText(pitch_label, 10, Math.max(y - 5, 10)); // Highest pitch
+        }
+    }
+
+    // Vertical grid lines (for time)
+    const time_interval = 1; // Mark every 1 second
+    for (let i = 0; i <= total_time; i += time_interval) {
+        const x = i * time_scale;
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+
+        // Skip the "0s" label
+        if (i !== 0) {
+            ctx.fillText(`${i}s`, x, canvas.height - 5);
+        }
+    }
+
+    const checkedValues = $("input[id='play-track-check']:checked").map(function() {
+        return $(this).val();
+    }).get().map(Number);
+
+    const note_rects = []; // Store note rectangles for hover detection
+
+    checkedValues.forEach(trackIndex => {
+        const events = tracks_events[trackIndex].events;
+        const color = colors[trackIndex];
+        const note_on_events = {};
+
+        events.forEach(event => {
+            if (event.type === 'on') {
+                note_on_events[event.pitch] = event.time_offset;
+            } else if (event.type === 'off' && note_on_events[event.pitch] !== undefined) {
+                const start_time = note_on_events[event.pitch];
+                const end_time = event.time_offset;
+                const pitch_index = event.pitch - lowest_pitch;
+                const y = canvas.height - (pitch_index * note_height);
+                const x = start_time * time_scale;
+                const width = (end_time - start_time) * time_scale;
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y - note_height / 2, width, note_height);
+
+                // Store note rectangle for hover detection
+                note_rects.push({
+                    x,
+                    y: y - note_height / 2,
+                    width,
+                    height: note_height,
+                    pitch: event.pitch,
+                    start_time,
+                    duration: end_time - start_time
+                });
+
+                delete note_on_events[event.pitch];
+            }
+        });
+    });
+
+    // Add hover effect to display note details
+    canvas.onmousemove = function(evt) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = evt.clientX - rect.left;
+        const mouseY = evt.clientY - rect.top;
+
+        // Clear hover effects
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawNoteVisualization(isPlaying); // Redraw the visualization
+
+        // Check if mouse is over any note
+        note_rects.forEach(note => {
+            if (
+                mouseX >= note.x &&
+                mouseX <= note.x + note.width &&
+                mouseY >= note.y &&
+                mouseY <= note.y + note.height
+            ) {
+                // Highlight the note
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(note.x, note.y, note.width, note.height);
+
+                // Calculate the position for displaying note details
+                let textX = mouseX;
+                let textY = mouseY - 10; // Default position above the mouse
+
+                // If the text goes out of the top boundary, display it below the mouse
+                if (textY < 10) {
+                    textY = mouseY + 20; // Adjust to display below the mouse
+                }
+
+                // Display note details
+                ctx.fillStyle = 'black';
+                ctx.fillText(
+                    `Pitch: ${note.pitch}, Start: ${note.start_time.toFixed(2)}s, Duration: ${note.duration.toFixed(2)}s`,
+                    textX,
+                    textY
+                );
+            }
+        });
+    };
 }
 
 $(document).ready(function() {
@@ -282,6 +428,8 @@ $(document).ready(function() {
                 let new_instrument = parseInt($("#instrument_track_3").val());
                 MIDI.programChange(3, new_instrument);
             });
+
+            
         }
     });
 });
