@@ -97,6 +97,49 @@
               <input type="radio" name="playmode" id="minor_btn" value="minor"> Minor Chord
             </label>
           </div>
+            <!-- Play Mode for Track 1 -->
+            <label for="playmode_track_1">Play Mode for Track 1:</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input type="radio" name="playmode_track_1" id="single_btn_track_1" value="single" checked> Single Note
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_1" id="major_btn_track_1" value="major"> Major Chord
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_1" id="minor_btn_track_1" value="minor"> Minor Chord
+              </label>
+            </div>
+
+            <!-- Play Mode for Track 2 -->
+            <label for="playmode_track_2">Play Mode for Track 2:</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input type="radio" name="playmode_track_2" id="single_btn_track_2" value="single" checked> Single Note
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_2" id="major_btn_track_2" value="major"> Major Chord
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_2" id="minor_btn_track_2" value="minor"> Minor Chord
+              </label>
+            </div>
+
+            <!-- Play Mode for Track 3 -->
+            <label for="playmode_track_3">Play Mode for Track 3:</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-secondary active">
+                <input type="radio" name="playmode_track_3" id="single_btn_track_3" value="single" checked> Single Note
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_3" id="major_btn_track_3" value="major"> Major Chord
+              </label>
+              <label class="btn btn-secondary">
+                <input type="radio" name="playmode_track_3" id="minor_btn_track_3" value="minor"> Minor Chord
+              </label>
+            </div>
+          </div>
+
         </div>
         <div class="col-6">
           <label for="instrument">Instrument: </label>
@@ -105,6 +148,60 @@
               <label class="input-group-text" for="instrument">Options</label>
             </div>
             <select class="custom-select" id="instrument">
+              <option selected value="57">Trumpet</option>
+              <option value="0">Piano 1</option>
+              <option value="29">Electric Guitar (Overdrive)</option>
+              <option value="40">Violin</option>
+              <option value="73">Flute</option>
+              <option value="105">Banjo</option>
+              <option value="71">Clarinet</option>
+              <option value="53">Voice Oohs</option>
+              <option value="52">Choir Aahs</option>
+              <option value="46">Orchestral Harp</option>
+            </select>
+          </div>
+          <label for="instrument">Instrument for track 1: </label>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="instrument">Options</label>
+            </div>
+            <select class="custom-select" id="instrument_track_1">
+              <option selected value="57">Trumpet</option>
+              <option value="0">Piano 1</option>
+              <option value="29">Electric Guitar (Overdrive)</option>
+              <option value="40">Violin</option>
+              <option value="73">Flute</option>
+              <option value="105">Banjo</option>
+              <option value="71">Clarinet</option>
+              <option value="53">Voice Oohs</option>
+              <option value="52">Choir Aahs</option>
+              <option value="46">Orchestral Harp</option>
+            </select>
+          </div>
+          <label for="instrument">Instrument for track 2: </label>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="instrument">Options</label>
+            </div>
+            <select class="custom-select" id="instrument_track_2">
+              <option selected value="57">Trumpet</option>
+              <option value="0">Piano 1</option>
+              <option value="29">Electric Guitar (Overdrive)</option>
+              <option value="40">Violin</option>
+              <option value="73">Flute</option>
+              <option value="105">Banjo</option>
+              <option value="71">Clarinet</option>
+              <option value="53">Voice Oohs</option>
+              <option value="52">Choir Aahs</option>
+              <option value="46">Orchestral Harp</option>
+            </select>
+          </div>
+          <label for="instrument">Instrument for track 3: </label>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="instrument">Options</label>
+            </div>
+            <select class="custom-select" id="instrument_track_3">
               <option selected value="57">Trumpet</option>
               <option value="0">Piano 1</option>
               <option value="29">Electric Guitar (Overdrive)</option>
@@ -130,6 +227,18 @@
             </div>
             <div class="row flex-fill align-items-center mx-0 px-2 border rounded-left">
               <input class="custom-range" id="bpm" type="range" value="100" min="60" max="140">
+            </div>
+            <div class="input-group-append">
+              <span class="input-group-text">140</span>
+            </div>
+          </div>
+          <label for="amplitude">Playing BPM:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">60</span>
+            </div>
+            <div class="row flex-fill align-items-center mx-0 px-2 border rounded-left">
+              <input class="custom-range" id="bpm_play" type="range" value="100" min="60" max="140">
             </div>
             <div class="input-group-append">
               <span class="input-group-text">140</span>
