@@ -168,7 +168,10 @@ function handlePageKeyUp(evt) {
 function play_recording() {
     const context = MIDI.getContext();
     context.resume().then(() => {
-        let checkedValues = $("input[id='play-track-check']:checked").map(function() {
+//        let checkedValues = $("input[id='play-track-check']:checked").map(function() {
+//            return $(this).val();
+//        }).get();
+        let checkedValues = $(".play-track-check:checked").map(function() {
             return $(this).val();
         }).get();
         for (let track = 0; track < checkedValues.length; ++track) {
@@ -256,9 +259,9 @@ function drawNoteVisualization(isPlaying = false) {
         }
     }
 
-    const checkedValues = $("input[id='play-track-check']:checked").map(function() {
+     let checkedValues = $(".play-track-check:checked").map(function() {
         return $(this).val();
-    }).get().map(Number);
+     }).get();
 
     const note_rects = []; // Store note rectangles for hover detection
 
