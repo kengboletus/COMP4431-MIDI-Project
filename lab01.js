@@ -269,13 +269,20 @@ function drawNoteVisualization(isPlaying = false) {
         const events = tracks_events[trackIndex].events;
         const color = colors[trackIndex];
         const note_on_events = {};
+        const recording_BPM = tracks_events[trackIndex].recording_BPM; 
 
         events.forEach(event => {
             if (event.type === 'on') {
                 note_on_events[event.pitch] = event.time_offset;
             } else if (event.type === 'off' && note_on_events[event.pitch] !== undefined) {
-                const start_time = note_on_events[event.pitch];
-                const end_time = event.time_offset;
+                let start_time = note_on_events[event.pitch];
+                let end_time = event.time_offset;
+                
+                const scale = recording_BPM / effective_BPM;
+                
+                start_time = start_time * scale;
+                end_time = end_time * scale;
+
                 const pitch_index = event.pitch - lowest_pitch;
                 const y = canvas.height - (pitch_index * note_height);
                 const x = start_time * time_scale;
